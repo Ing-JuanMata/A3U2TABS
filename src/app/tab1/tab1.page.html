@@ -10,7 +10,7 @@
       <ion-col size="4">
         <ion-item>
           <ion-label position="floating">Nombre</ion-label>
-          <ion-input type="text" [(ngModel)]="student.name"></ion-input>
+          <ion-input type="text" [(ngModel)]="student.name" #nombre></ion-input>
         </ion-item>
       </ion-col>
       <ion-col size="4">
@@ -72,8 +72,10 @@
           shape="round"
           fill="outline"
           size="large"
+          [color]="validStudent() ? 'primary' : 'danger'"
+          [disabled]="!validStudent()"
         >
-          <ion-icon slot="icon-only" name="add"></ion-icon>
+          <ion-icon slot="icon-only" name="add" ></ion-icon>
         </ion-button>
       </ion-col>
     </ion-row>
@@ -112,7 +114,7 @@
                   <ion-button (click)="deleteStudent(i)" fill="outline" color="danger" class="ion-margin-end">
                     <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
                   </ion-button>
-                  <ion-button (click)="deleteStudent(i)" fill="outline">
+                  <ion-button (click)="updateStudent(i)" fill="outline">
                     <ion-icon slot="icon-only" name="create"></ion-icon>
                   </ion-button>
                 </ion-col>
