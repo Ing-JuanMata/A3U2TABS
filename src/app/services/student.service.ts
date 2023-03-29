@@ -47,13 +47,18 @@ export class StudentService {
     return this.students;
   }
 
-  public updateStudent(pos: number, student: Student): Student[] {
+  public updateStudent(student: Student): Student[] {
+    const pos = this.students.findIndex(
+      (std) => std.controlNumber === student.controlNumber
+    );
     this.students[pos] = student;
     return this.students;
   }
 
-  public deleteStudent(pos: number): Student[] {
-    this.students.splice(pos, 1);
+  public deleteStudent(controlNumber: string): Student[] {
+    this.students = this.students.filter(
+      (student) => student.controlNumber !== controlNumber
+    );
     return this.students;
   }
 }

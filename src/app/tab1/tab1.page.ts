@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import {
   AlertController,
   IonInput,
+  IonSelect,
   ModalController,
   ToastController,
 } from '@ionic/angular';
@@ -19,7 +20,9 @@ import { StudentUpdateComponent } from './student-update/student-update.componen
 })
 export class Tab1Page {
   @ViewChild('nombre') nombre!: IonInput;
+  @ViewChild('filtro') filtro!: IonSelect;
   students: Student[] = [];
+  filteredStudents: Student[] = [];
   student: Student = {
     controlNumber: '',
     age: 0,
@@ -39,6 +42,7 @@ export class Tab1Page {
     private modalController: ModalController
   ) {
     this.students = this.studentService.getStudents();
+    this.filteredStudents = this.students;
     this.carreras = this.carreraService.getCarreras();
   }
 
@@ -46,10 +50,10 @@ export class Tab1Page {
     this.nombre.setFocus();
   }
 
-  public deleteStudent(pos: number) {
+  public deleteStudent(controlNumber: string) {
     this.confirmationDialog(
       '¿Estás seguro de eliminar este estudiante?',
-      () => (this.students = this.studentService.deleteStudent(pos))
+      () => (this.students = this.studentService.deleteStudent(controlNumber))
     );
   }
 
@@ -70,14 +74,14 @@ export class Tab1Page {
     this.presentToast('Estudiante agregado', 'success');
   }
 
-  public async updateStudent(pos: number) {
+  public async updateStudent(student: Student) {
     const modal = await this.modalController.create({
       component: StudentUpdateComponent,
       componentProps: {
-        student: { ...this.students[pos] },
+        student: { ...student },
         carreras: this.carreras,
         updateStudent: (student: Student) => {
-          this.students = this.studentService.updateStudent(pos, student);
+          this.students = this.studentService.updateStudent(student);
           modal.dismiss(undefined, 'confirm');
           this.presentToast('Estudiante actualizado', 'success');
         },
@@ -102,6 +106,34 @@ export class Tab1Page {
       this.student.curp.match(/^[A-Z]{4}[0-9]{6}[A-Z]{6}[0-9]{2}$/) !== null &&
       this.student.controlNumber.match(/^[BC]?[0-9]{8}$/) !== null
     );
+  }
+
+  public filterStudents(event: Event) {
+    if (event instanceof CustomEvent) {
+      const busqueda = event.detail.value;
+      
+      if (!busqueda.trim()) {
+        this.filteredStudents = this.students;
+        return;
+      }
+      switch (this.filtro.value) {
+        case 'nombre':
+          this.filteredStudents = this.students.filter((student) =>
+            student.name.toLowerCase().includes(busqueda.toLowerCase())
+          );
+          break;
+        case 'control':
+          this.filteredStudents = this.students.filter((student) =>
+            student.controlNumber.toLowerCase().includes(busqueda.toLowerCase())
+          );
+          break;
+        case 'carrera':
+          this.filteredStudents = this.students.filter((student) =>
+            student.career.toLowerCase().includes(busqueda.toLowerCase())
+          );
+          break;
+      }
+    }
   }
 
   private async presentToast(
