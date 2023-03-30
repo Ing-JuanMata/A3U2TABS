@@ -7,81 +7,11 @@
 <ion-content [fullscreen]="true">
   <ion-grid>
     <ion-row>
-      <ion-col size="4">
-        <ion-item>
-          <ion-label position="floating">Nombre</ion-label>
-          <ion-input type="text" [(ngModel)]="student.name" #nombre></ion-input>
-        </ion-item>
-      </ion-col>
-      <ion-col size="4">
-        <ion-item>
-          <ion-label position="floating">Correo</ion-label>
-          <ion-input type="email" [(ngModel)]="student.email"></ion-input>
-        </ion-item>
-      </ion-col>
-      <ion-col size="2">
-        <ion-item>
-          <ion-label position="floating">Numero de control</ion-label>
-          <ion-input type="text" [(ngModel)]="student.controlNumber">
-          </ion-input>
-        </ion-item>
-      </ion-col>
-      <ion-col size="1">
-        <ion-item>
-          <ion-label position="floating">Edad</ion-label>
-          <ion-input type="number" [(ngModel)]="student.age"></ion-input>
-        </ion-item>
-      </ion-col>
-      <ion-col size="1">
-        <ion-item>
-          <ion-label position="floating">NIP</ion-label>
-          <ion-input type="number" [(ngModel)]="student.nip"></ion-input>
-        </ion-item>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col size="4">
-        <ion-item>
-          <ion-label position="floating">Carrera</ion-label>
-          <ion-select
-            placeholder="Seleccione una carrera"
-            interface="popover"
-            [(ngModel)]="student.career"
-          >
-            <ion-select-option
-              *ngFor="let carrera of carreras"
-              [value]="carrera.acronym"
-            >
-              {{carrera.name}}
-            </ion-select-option>
-          </ion-select>
-        </ion-item>
-      </ion-col>
-      <ion-col size="4">
-        <ion-item>
-          <ion-label position="floating">Curp</ion-label>
-          <ion-input type="text" [(ngModel)]="student.curp"></ion-input>
-        </ion-item>
-      </ion-col>
-      <ion-col size="4">
-        <ion-button
-          (click)="newStudent()"
-          expand="block"
-          shape="round"
-          fill="outline"
-          size="large"
-          [color]="validStudent() ? 'primary' : 'danger'"
-          [disabled]="!validStudent()"
-        >
-          <ion-icon slot="icon-only" name="add"></ion-icon>
-        </ion-button>
-      </ion-col>
-    </ion-row>
-    <ion-row>
       <ion-col size="6">
         <ion-searchbar
           placeholder="Buscar"
           (ionChange)="filterStudents($event)"
+          #input
         ></ion-searchbar>
       </ion-col>
       <ion-col size="6">
