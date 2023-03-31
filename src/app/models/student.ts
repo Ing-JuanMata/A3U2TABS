@@ -19,5 +19,5 @@ export interface StudentForm {
   nip: FormControl<number>;
   email: FormControl<string>;
   career: FormControl<string>;
-  photo: FormControl<string>;
+  photo: FormControl<string | undefined>;
 }

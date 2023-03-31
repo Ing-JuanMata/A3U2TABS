@@ -9,7 +9,6 @@ import {
 
 import { Student } from '../models/student';
 import { StudentService } from '../services/student.service';
-import { StudentUpdateComponent } from './student-update/student-update.component';
 
 @Component({
   selector: 'app-tab1',
@@ -17,7 +16,7 @@ import { StudentUpdateComponent } from './student-update/student-update.componen
   styleUrls: ['tab1.page.scss'],
 })
 export class Tab1Page {
-  @ViewChild('input') nombre!: IonSearchbar;
+  @ViewChild('input') busqueda!: IonSearchbar;
   @ViewChild('filtro') filtro!: IonSelect;
   students: Student[] = [];
   filteredStudents: Student[] = [];
@@ -32,63 +31,47 @@ export class Tab1Page {
   }
 
   ionViewDidEnter() {
-    this.nombre.setFocus();
+    this.busqueda.setFocus();
     this.students = this.studentService.getStudents();
   }
 
   public deleteStudent(controlNumber: string) {
     this.confirmationDialog(
       '¿Estás seguro de eliminar este estudiante?',
-      () => (this.students = this.studentService.deleteStudent(controlNumber))
+      () => {
+        this.students = this.studentService.deleteStudent(controlNumber);
+        this.filter(this.busqueda.value || '');
+      }
     );
   }
 
-  public async updateStudent(student: Student) {
-    const modal = await this.modalController.create({
-      component: StudentUpdateComponent,
-      componentProps: {
-        student: { ...student },
-        //carreras: this.carreras,
-        updateStudent: (student: Student) => {
-          this.students = this.studentService.updateStudent(student);
-          modal.dismiss(undefined, 'confirm');
-          this.presentToast('Estudiante actualizado', 'success');
-        },
-      },
-    });
-    modal.present();
-    modal.onDidDismiss().then((respuesta) => {
-      if (respuesta.role === 'cancel' || respuesta.role === 'backdrop')
-        this.presentToast('Operación cancelada', 'warning');
-      this.students = this.studentService.getStudents();
-    });
+  private filter(busqueda: string) {
+    if (!busqueda.trim()) {
+      this.filteredStudents = this.students;
+      return;
+    }
+    switch (this.filtro.value) {
+      case 'nombre':
+        this.filteredStudents = this.students.filter((student) =>
+          student.name.toLowerCase().includes(busqueda.toLowerCase())
+        );
+        break;
+      case 'control':
+        this.filteredStudents = this.students.filter((student) =>
+          student.controlNumber.toLowerCase().includes(busqueda.toLowerCase())
+        );
+        break;
+      case 'carrera':
+        this.filteredStudents = this.students.filter((student) =>
+          student.career.toLowerCase().includes(busqueda.toLowerCase())
+        );
+        break;
+    }
   }
 
   public filterStudents(event: Event) {
     if (event instanceof CustomEvent) {
-      const busqueda = event.detail.value;
-
-      if (!busqueda.trim()) {
-        this.filteredStudents = this.students;
-        return;
-      }
-      switch (this.filtro.value) {
-        case 'nombre':
-          this.filteredStudents = this.students.filter((student) =>
-            student.name.toLowerCase().includes(busqueda.toLowerCase())
-          );
-          break;
-        case 'control':
-          this.filteredStudents = this.students.filter((student) =>
-            student.controlNumber.toLowerCase().includes(busqueda.toLowerCase())
-          );
-          break;
-        case 'carrera':
-          this.filteredStudents = this.students.filter((student) =>
-            student.career.toLowerCase().includes(busqueda.toLowerCase())
-          );
-          break;
-      }
+      this.filter(event.detail.value);
     }
   }
 

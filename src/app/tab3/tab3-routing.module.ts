@@ -4,13 +4,18 @@ import { Tab3Page } from './tab3.page';
 
 const routes: Routes = [
   {
+    pathMatch: 'full',
     path: '',
+    redirectTo: '../tab1',
+  },
+  {
+    path: ':controlNumber',
     component: Tab3Page,
-  }
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class Tab3PageRoutingModule {}

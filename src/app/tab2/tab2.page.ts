@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -8,9 +8,9 @@ import {
 import { ToastController } from '@ionic/angular';
 
 import { Carrera } from '../models/carrera';
+import { StudentForm } from '../models/student';
 import { CarrerasService } from '../services/carreras.service';
 import { StudentService } from '../services/student.service';
-import { StudentForm } from '../models/student';
 
 @Component({
   selector: 'app-tab2',
@@ -18,7 +18,6 @@ import { StudentForm } from '../models/student';
   styleUrls: ['tab2.page.scss'],
 })
 export class Tab2Page implements OnInit {
-  @ViewChild('div') div!: HTMLDivElement;
   myForm!: FormGroup<StudentForm>;
   carreras: Carrera[] = [];
   validation_messages!: any;
@@ -29,10 +28,6 @@ export class Tab2Page implements OnInit {
     private formBuilder: FormBuilder
   ) {
     this.carreras = this.carreraService.getCarreras();
-  }
-
-  ionViewDidEnter() {
-    console.log(this.div);
   }
 
   ngOnInit() {
@@ -77,36 +72,8 @@ export class Tab2Page implements OnInit {
       }),
       photo: new FormControl('https://picsum.photos/200', {
         nonNullable: true,
-        validators: [Validators.required],
       }),
     });
-
-    // this.myForm = this.formBuilder.group({
-    //   name: ['', Validators.required],
-    //   age: [0, Validators.compose([Validators.min(17), Validators.required])],
-    //   career: ['', Validators.required],
-    //   curp: [
-    //     '',
-    //     Validators.compose([
-    //       Validators.minLength(18),
-    //       Validators.pattern(
-    //         '^[A-Z]{1}[AEIOU]{1}[A-Z]{2}[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1])[HM]{1}(AS|BC|BS|CC|CS|CH|CL|CM|DF|DG|GT|GR|HG|JC|MC|MN|MS|NT|NL|OC|PL|QT|QR|SP|SL|SR|TC|TS|TL|VZ|YN|ZS|NE)[B-DF-HJ-NP-TV-Z]{3}[0-9A-Z]{1}[0-9]{1}$'
-    //       ),
-    //       Validators.required,
-    //     ]),
-    //   ],
-    //   email: ['', Validators.compose([Validators.email, Validators.required])],
-    //   controlNumber: [
-    //     '',
-    //     Validators.compose([
-    //       Validators.minLength(8),
-    //       Validators.pattern('^[a-zA-Z]?[0-9]+$'),
-    //       Validators.required,
-    //     ]),
-    //   ],
-    //   nip: [0, Validators.compose([Validators.min(10), Validators.required])],
-    //   photo: ['', Validators.compose([Validators.required])],
-    // });
 
     this.validation_messages = {
       name: [

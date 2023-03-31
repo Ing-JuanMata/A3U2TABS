@@ -72,7 +72,10 @@
                       color="danger"
                     ></ion-icon>
                   </ion-button>
-                  <ion-button (click)="updateStudent(student)" fill="outline">
+                  <ion-button
+                    [routerLink]="['/tabs', 'tab3', student.controlNumber]"
+                    fill="outline"
+                  >
                     <ion-icon slot="icon-only" name="create"></ion-icon>
                   </ion-button>
                 </ion-col>

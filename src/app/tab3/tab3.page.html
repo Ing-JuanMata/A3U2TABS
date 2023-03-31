@@ -1,17 +1,173 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Tab 3
-    </ion-title>
+    <ion-title> Actualizar datos estudiante </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 3</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <form [formGroup]="myForm">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12">
+          <ion-item>
+            <ion-label position="floating">N&uacute;mero control</ion-label>
+            <ion-input type="text" formControlName="controlNumber"></ion-input>
+          </ion-item>
 
-  <app-explore-container name="Tab 3 page"></app-explore-container>
+          <ng-container *ngFor="let error of validation_messages.controlNumber">
+            <ion-item
+              class="error-message"
+              *ngIf="myForm.get('controlNumber')?.hasError(error.type) && myForm.get('controlNumber')?.touched"
+            >
+              <ion-label>{{ error.message }}</ion-label>
+            </ion-item>
+          </ng-container>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          <ion-item>
+            <ion-label position="floating">Nombre</ion-label>
+            <ion-input type="text" formControlName="name"></ion-input>
+          </ion-item>
+
+          <ng-container *ngFor="let error of validation_messages.name">
+            <ion-item
+              class="error-message"
+              *ngIf="myForm.get('name')?.hasError(error.type) && myForm.get('name')?.touched"
+            >
+              <ion-label>{{ error.message }}</ion-label>
+            </ion-item>
+          </ng-container>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          <ion-item>
+            <ion-label position="floating">CURP</ion-label>
+            <ion-input type="text" formControlName="curp"></ion-input>
+          </ion-item>
+
+          <ng-container *ngFor="let error of validation_messages.curp">
+            <ion-item
+              class="error-message"
+              *ngIf="myForm.get('curp')?.hasError(error.type) && myForm.get('curp')?.touched"
+            >
+              <ion-label>{{ error.message }}</ion-label>
+            </ion-item>
+          </ng-container>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          <ion-item>
+            <ion-label position="floating">Edad</ion-label>
+            <ion-input type="number" formControlName="age" min="17"></ion-input>
+          </ion-item>
+
+          <ng-container *ngFor="let error of validation_messages.age">
+            <ion-item
+              class="error-message"
+              *ngIf="myForm.get('age')?.hasError(error.type) && myForm.get('age')?.touched"
+            >
+              <ion-label>{{ error.message }}</ion-label>
+            </ion-item>
+          </ng-container>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          <ion-item>
+            <ion-label position="floating">NIP</ion-label>
+            <ion-input type="number" formControlName="nip"></ion-input>
+          </ion-item>
+
+          <ng-container *ngFor="let error of validation_messages.nip">
+            <ion-item
+              class="error-message"
+              *ngIf="myForm.get('nip')?.hasError(error.type) && myForm.get('nip')?.touched"
+            >
+              <ion-label>{{ error.message }}</ion-label>
+            </ion-item>
+          </ng-container>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          <ion-item>
+            <ion-label position="floating">Email</ion-label>
+            <ion-input type="email" formControlName="email"></ion-input>
+          </ion-item>
+
+          <ng-container *ngFor="let error of validation_messages.email">
+            <ion-item
+              class="error-message"
+              *ngIf="myForm.get('email')?.hasError(error.type) && myForm.get('email')?.touched"
+            >
+              <ion-label>{{ error.message }}</ion-label>
+            </ion-item>
+          </ng-container>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          <ion-item>
+            <ion-label position="floating">Carrera</ion-label>
+            <ion-select
+              placeholder="Seleccione carrera"
+              interface="popover"
+              formControlName="career"
+              value=""
+            >
+              <ion-select-option
+                *ngFor="let carrera of careers"
+                [value]="carrera.acronym"
+                >{{carrera.name}}</ion-select-option
+              >
+            </ion-select>
+          </ion-item>
+
+          <ng-container *ngFor="let error of validation_messages.career">
+            <ion-item
+              class="error-message"
+              *ngIf="myForm.get('career')?.hasError(error.type) && myForm.get('career')?.touched"
+            >
+              <ion-label>{{ error.message }}</ion-label>
+            </ion-item>
+          </ng-container>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          <ion-item>
+            <ion-label position="floating">Foto</ion-label>
+            <ion-input formControlName="photo"></ion-input>
+          </ion-item>
+
+          <ng-container *ngFor="let error of validation_messages.photo">
+            <ion-item
+              class="error-message"
+              *ngIf="myForm.get('photo')?.hasError(error.type) && myForm.get('photo')?.touched"
+            >
+              <ion-label>{{ error.message }}</ion-label>
+            </ion-item>
+          </ng-container>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          <ion-button
+            expand="block"
+            color="success"
+            shape="round"
+            [disabled]="!myForm.valid"
+            (click)="updateStudent()"
+          >
+            <ion-icon slot="start" name="checkmark"></ion-icon>&nbsp;
+            <ion-label>Actualizar</ion-label>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
 </ion-content>
