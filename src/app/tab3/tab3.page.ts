@@ -12,6 +12,7 @@ import { Carrera } from '../models/carrera';
 import { Student, StudentForm } from '../models/student';
 import { CarrerasService } from '../services/carreras.service';
 import { StudentService } from '../services/student.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-tab3',
@@ -19,11 +20,11 @@ import { StudentService } from '../services/student.service';
   styleUrls: ['tab3.page.scss'],
 })
 export class Tab3Page {
+  private student$?: Subscription;
   controlNumber: string = '';
   validation_messages!: any;
   myForm!: FormGroup<StudentForm>;
   careers: Carrera[] = [];
-  students: Student[] = [];
   student?: Student = {
     controlNumber: '',
     name: '',
@@ -45,7 +46,6 @@ export class Tab3Page {
     private router: Router
   ) {
     this.careers = this.careerService.getCarreras();
-    this.students = this.studentService.getStudents();
   }
 
   ngOnInit() {
@@ -183,12 +183,15 @@ export class Tab3Page {
           return;
         }
         this.controlNumber = paramMap.get('controlNumber')!;
-        this.student = this.studentService.getStudentByControlNumber(
-          this.controlNumber
-        );
-        if (this.student) {
-          this.myForm.patchValue(this.student);
-        }
+        this.student$?.unsubscribe();
+        this.student$ = this.studentService
+          .getStudentByControlNumber(this.controlNumber)
+          .subscribe((student) => {
+            if (student.length > 0) {
+              this.myForm.patchValue(student[0]);
+              this.student = student[0];
+            }
+          });
       })
       .unsubscribe();
   }
@@ -197,9 +200,16 @@ export class Tab3Page {
     this.confirmationDialog(
       '¿Estás seguro de actualizar el estudiante?',
       () => {
-        this.studentService.updateStudent(this.myForm.getRawValue());
-        this.presentToast('Estudiante actualizado', 'success');
-        this.router.navigate(['tabs', 'tab1']);
+        this.studentService
+          .updateStudent({ ...this.student, ...this.myForm.getRawValue() })
+          .then(() => {
+            this.presentToast('Estudiante actualizado', 'success');
+            this.router.navigate(['tabs', 'tab1']);
+          })
+          .catch((error) => {
+            this.presentToast('Error al actualizar', 'danger');
+            console.log(error);
+          });
       }
     );
   }

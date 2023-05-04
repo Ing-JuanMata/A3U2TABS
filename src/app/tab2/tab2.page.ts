@@ -156,9 +156,19 @@ export class Tab2Page implements OnInit {
   }
 
   public newStudent() {
-    this.studentService.newStudent(this.myForm.getRawValue());
-    this.presentToast('Estudiante agregado', 'success');
-    this.myForm.reset();
+    this.studentService
+      .newStudent({
+        ...this.myForm.getRawValue(),
+        deleted: false,
+      })
+      .then(() => {
+        this.presentToast('Estudiante agregado', 'success');
+        this.myForm.reset();
+      })
+      .catch((error) => {
+        this.presentToast('Error al agregar estudiante', 'danger');
+        console.log(error);
+      });
   }
 
   private async presentToast(

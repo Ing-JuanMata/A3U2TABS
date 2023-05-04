@@ -1,6 +1,7 @@
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 
 export interface Student {
+  id?: string;
   controlNumber: string;
   name: string;
   curp: string;
@@ -9,6 +10,7 @@ export interface Student {
   email: string;
   career: string;
   photo?: string;
+  deleted?: boolean;
 }
 
 export interface StudentForm {

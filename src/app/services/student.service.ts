@@ -1,64 +1,54 @@
 import { Injectable } from '@angular/core';
 
 import { Student } from '../models/student';
+import {
+  CollectionReference,
+  DocumentData,
+  DocumentReference,
+  Firestore,
+  addDoc,
+  collection,
+  collectionData,
+  doc,
+  docData,
+  query,
+  updateDoc,
+  where,
+} from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StudentService {
-  private students: Student[] = [];
-  constructor() {
-    this.students.push(
-      {
-        controlNumber: 'C17400607',
-        age: 23,
-        career: 'ISC',
-        curp: 'MASJ990901HNTTLN04',
-        email: 'jujemataso@ittepic.edu.mx',
-        name: 'Juan Jesús Mata Solis',
-        nip: 4849,
-        photo: 'https://picsum.photos/600?random=1',
-      },
-      {
-        controlNumber: '18400607',
-        age: 23,
-        career: 'ISC',
-        curp: 'MASJ990901HNTTLN10',
-        email: 'jejusomata@ittepic.edu.mx',
-        name: 'Jesus Juan Solis Mata',
-        nip: 4849,
-        photo: 'https://picsum.photos/600?random=2',
-      }
-    );
+  private collection: CollectionReference<DocumentData>;
+  constructor(private readonly firestore: Firestore) {
+    this.collection = collection(firestore, 'students');
   }
 
-  public getStudents(): Student[] {
-    return this.students;
+  public getStudents() {
+    return collectionData(
+      query(this.collection, where('deleted', '!=', true)),
+      { idField: 'id' }
+    ) as Observable<Student[]>;
   }
 
-  public getStudentByControlNumber(controlNumber: string): Student | undefined {
-    return this.students.find(
-      (student) => student.controlNumber === controlNumber
-    );
+  public getStudentByControlNumber(controlNumber: string) {
+    return collectionData(
+      query(this.collection, where('controlNumber', '==', controlNumber)),
+      { idField: 'id' }
+    ) as Observable<Student[]>;
   }
 
-  public newStudent(student: Student): Student[] {
-    this.students.push(student);
-    return this.students;
+  public newStudent(student: Student) {
+    return addDoc(this.collection, student);
   }
 
-  public updateStudent(student: Student): Student[] {
-    const pos = this.students.findIndex(
-      (std) => std.controlNumber === student.controlNumber
-    );
-    this.students[pos] = student;
-    return this.students;
+  public updateStudent(student: Student) {
+    return updateDoc(doc(this.collection, student.id!!), { ...student });
   }
 
-  public deleteStudent(controlNumber: string): Student[] {
-    this.students = this.students.filter(
-      (student) => student.controlNumber !== controlNumber
-    );
-    return this.students;
+  public deleteStudent(id: string) {
+    return updateDoc(doc(this.collection, id), { deleted: true });
   }
 }

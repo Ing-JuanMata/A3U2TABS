@@ -1,9 +1,10 @@
-import { Component, ViewChild } from '@angular/core';
+import { Subscription } from 'rxjs';
+
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import {
   AlertController,
   IonSearchbar,
   IonSelect,
-  ModalController,
   ToastController,
 } from '@ionic/angular';
 
@@ -15,7 +16,8 @@ import { StudentService } from '../services/student.service';
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss'],
 })
-export class Tab1Page {
+export class Tab1Page implements OnDestroy {
+  private students$?: Subscription;
   @ViewChild('input') busqueda!: IonSearchbar;
   @ViewChild('filtro') filtro!: IonSelect;
   students: Student[] = [];
@@ -23,24 +25,36 @@ export class Tab1Page {
   constructor(
     private studentService: StudentService,
     private alertController: AlertController,
-    private toastController: ToastController,
-    private modalController: ModalController
+    private toastController: ToastController
   ) {
-    this.students = this.studentService.getStudents();
-    this.filteredStudents = this.students;
+    this.students$ = studentService.getStudents().subscribe((students) => {
+      this.students = students;
+      this.filteredStudents = students;
+      if (this.busqueda) this.filter(this.busqueda.value || '');
+    });
   }
 
   ionViewDidEnter() {
     this.busqueda.setFocus();
-    this.students = this.studentService.getStudents();
   }
 
-  public deleteStudent(controlNumber: string) {
+  public deleteStudent(id: string) {
     this.confirmationDialog(
       '¿Estás seguro de eliminar este estudiante?',
       () => {
-        this.students = this.studentService.deleteStudent(controlNumber);
-        this.filter(this.busqueda.value || '');
+        this.studentService
+          .deleteStudent(id)
+          .then(() => {
+            this.presentToast('Estudiante eliminado correctamente', 'success');
+            this.filter(this.busqueda.value || '');
+          })
+          .catch((error) => {
+            console.log(error);
+            this.presentToast(
+              'Ocurrió un error al eliminar el estudiante',
+              'danger'
+            );
+          });
       }
     );
   }
@@ -118,5 +132,9 @@ export class Tab1Page {
     alert.onDidDismiss().then((respuesta) => {
       if (dismissFunction) dismissFunction(respuesta);
     });
+  }
+
+  ngOnDestroy(): void {
+    this.students$?.unsubscribe();
   }
 }
